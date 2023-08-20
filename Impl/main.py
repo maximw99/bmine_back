@@ -1,21 +1,32 @@
 import xml.dom.minidom
 
 doc = xml.dom.minidom.parse("Data/19001-data.xml")
-speaker_list = doc.getElementsByTagName("rednerliste")
-speakerlist_node = speaker_list.item(0)
-speakers = speakerlist_node.getElementsByTagName("vorname")
-print("speakerlist: ", speakers.length, " type of: ", type(speakers))
+
+
+def get_allspeaker(doc):
+    speaker_list = doc.getElementsByTagName("rednerliste")
+    speaker_node = speaker_list.item(0)
+    speakers = speaker_node.getElementsByTagName("vorname")
+    for speaker in speakers:
+        print("vorname: ", speaker.firstChild.nodeValue)
+
+def get_speeches(doc):
+    daytopic_list = doc.getElementsByTagName("tagesordnungspunkt")
+    daytopic = daytopic_list.item(0)
+    speeches_list = daytopic.getElementsByTagName("rede")
+    speech_node = speeches_list.item(0)
+    speech_id = speech_node.getAttribute("id")
+    speechescontent_list = speech_node.getElementsByTagName("p")
+    for speech_content in speechescontent_list:
+        print(speech_content.firstChild.nodeValue)
+    print(speechescontent_list.length)
 
 
 
-for speaker in speakers:
-    print("vorname: ", speaker.firstChild.nodeValue)
+
+get_speeches(doc)
 
 
-#print(speaker_group.getElementsByTagName("vorname")[1].firstChild.nodeValue)
 
 
-""" for speaker in speaker_group:
-    speaker_id = speaker.getAttribute("id")
-    speaker_name = speaker.getElementsByTagName("vorname")[0].childNodes[0].nodeValue
-    print(speaker_group) """
+
