@@ -3,6 +3,10 @@ class Party:
         self.name = name 
         self.id = id
 
+    def __init__(self):
+        pass
+
+
     # getter
     @property
     def name(self):

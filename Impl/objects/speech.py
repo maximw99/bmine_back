@@ -1,24 +1,34 @@
 class Speech:
-    def __init__(self, id, speaker, content):
+    def __init__(self, id, speaker, content, comments):
         self.id = id
         self.speaker = speaker
         self.content = content
+        self.comments = comments
+
+    def __init__(self):
+        pass
 
 
     # getter
+
     @property
     def id(self):
         return self._id
 
     @property
     def speaker(self):
-        return self._id
+        return self._speaker
 
     @property
     def content(self):
-        return self._id
+        return self._content
+    
+    @property
+    def comments(self):
+        return self._comments
 
     # setter
+
     @id.setter
     def id(self, value):
         self._id = value
@@ -30,4 +40,8 @@ class Speech:
     @content.setter
     def content(self, value):
         self._content = value
+
+    @comments.setter
+    def comments(self, value):
+        self._comments = value
 
