@@ -80,11 +80,15 @@ def read_xml(doc: xml.dom.minidom.Document, speaker_doc: xml.dom.minidom.Documen
     prot.daytopics = daytopics_array
 
     # check
-    for daytopic in prot.daytopics:
+    for daytopic in prot.daytopics: 
         for speech in daytopic.speeches:
-            print("speech: " + speech.id + " from: " + speech.speaker.id + " " + speech.speaker.firstname + " " + speech.speaker.lastname + " von der: " + speech.speaker.party)
-            """ for comment in speech.comments:
+            """ print("speech: " + speech.id + " from: " + speech.speaker.id + " " + speech.speaker.firstname + " " + speech.speaker.lastname + " von der: " + speech.speaker.party)
+            for comment in speech.comments:
                 print(comment.content) """
+            
+    print("daytopics amount: ", prot.daytopics[1].speeches[0].content)
+    return prot
+        
         
 def complete_speaker(doc: xml.dom.minidom.Document, speaker: Speaker.Speaker):
     speaker_list = doc.getElementsByTagName("MDB")
