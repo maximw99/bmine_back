@@ -18,3 +18,8 @@ class Comment:
     def content(self, value):
         self._content = value
 
+    # to doc
+    
+    def to_document(self):
+        doc = {"content": self._content}
+        return doc

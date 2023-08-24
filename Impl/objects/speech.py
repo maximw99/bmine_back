@@ -45,3 +45,9 @@ class Speech:
     def comments(self, value):
         self._comments = value
 
+    # to doc
+
+    def to_document(self):
+        doc = {"_id": self._id, "speaker": None, "content": self._content, "comments": None}
+        return doc
+

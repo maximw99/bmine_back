@@ -61,3 +61,9 @@ class Prot:
     @daytopics.setter
     def daytopics(self, value):
         self._daytopics = value
+
+    # to doc
+
+    def to_document(self):
+        doc = {"_id": self._nr, "date": self._date, "begin": self._begin, "end": self._end, "period": self._period, "daytopics": None}
+        return doc

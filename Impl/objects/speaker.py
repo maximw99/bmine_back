@@ -78,3 +78,9 @@ class Speaker:
     @party.setter
     def party(self, value):
         self._party = value
+
+    # to doc
+
+    def to_document(self):
+        doc = {"_id": self._id, "firstname": self._firstname, "lastname": self._lastname, "title": self._title, "bday": self._bday, "religion": self._religion, "jobs": self._jobs, "party": None}
+        return doc

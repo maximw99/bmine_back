@@ -5,6 +5,11 @@ import objects.comment as Comment
 import objects.party as Party
 import objects.prot as Prot
 import objects.daytopics as Daytopics
+from mongo import *
+import pymongo
+from pymongo.collection import Collection
+import bson
+
 
 doc = xml.dom.minidom.parse("Data/19001-data.xml")
 speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
@@ -80,13 +85,6 @@ def read_xml(doc: xml.dom.minidom.Document, speaker_doc: xml.dom.minidom.Documen
     prot.daytopics = daytopics_array
 
     # check
-    for daytopic in prot.daytopics: 
-        for speech in daytopic.speeches:
-            """ print("speech: " + speech.id + " from: " + speech.speaker.id + " " + speech.speaker.firstname + " " + speech.speaker.lastname + " von der: " + speech.speaker.party)
-            for comment in speech.comments:
-                print(comment.content) """
-            
-    print("daytopics amount: ", prot.daytopics[1].speeches[0].content)
     return prot
         
         
@@ -134,32 +132,75 @@ def complete_speaker(doc: xml.dom.minidom.Document, speaker: Speaker.Speaker):
             # party
             speakerparty_list = speaker_node.getElementsByTagName("PARTEI_KURZ")
             speaker_party = speakerparty_list.item(0).firstChild.nodeValue
-            speaker.party = speaker_party
+            party = Party.Party()
+            party.name = speaker_party
+            speaker.party = party
 
     return speaker
 
+def insert_prot(prot: Prot.Prot, coll: Collection):
+    
+    # get prot info
+    mongo_prot: {}  = prot.to_document()
+    
+    # get daytopics
+    mongo_daytopiclist = []
+    for daytopic in prot.daytopics:
+        daytopic: Daytopics.Daytopic = daytopic
+        mongo_daytopic = daytopic.to_document()
+
+        # get speeches
+        mongo_speecheslist = []
+        for speech in daytopic.speeches:
+            speech: Speech.Speech = speech
+            mongo_speech = speech.to_document()
+
+            # get speaker
+            speaker: Speaker.Speaker = speech.speaker
+            mongo_speaker = speaker.to_document()
+
+            # get party
+            party: Party.Party = speaker.party
+            mongo_party = party.to_document()
+
+            # get comments
+            mongo_commentlist = []
+            for comment in speech.comments:
+                comment: Comment.Comment = comment
+                mongo_comment = comment.to_document()
+                mongo_commentlist.append(mongo_comment)
+
+            # fill speaker
+            mongo_speaker["party"] = mongo_party
+                
+            # fill speech
+            mongo_speech["speaker"] = mongo_speaker
+            mongo_speech["comments"] = mongo_commentlist
+            mongo_speecheslist.append(mongo_speech)
+
+        # fill daytopic
+        mongo_daytopic["speeches"] = mongo_speecheslist
+        mongo_daytopiclist.append(mongo_daytopic)
+
+    # fill prot
+    mongo_prot["daytopics"] = mongo_daytopiclist
+    
+    print("inserting...")
+    coll.insert_one(mongo_prot)
 
 
 
 
+# Mongo connec
+client = get_mongoconnec()
+db = get_mongodb(client)
+coll = get_mongocoll(db)
 
 
 
-
-
-
-
-
-
-        
-        
-        
-
-
-
-
-read_xml(doc, speaker_doc)
+test_prot = read_xml(doc, speaker_doc)
 #complete_speaker(speaker_doc)
+insert_prot(test_prot, coll)
 
 
 

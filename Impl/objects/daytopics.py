@@ -25,3 +25,9 @@ class Daytopic:
     @speeches.setter
     def speeches(self, value):
         self._speeches = value
+
+    # to doc
+
+    def to_document(self):
+        doc = {"_id": self._nr, "speeches": None}
+        return doc

@@ -1,7 +1,6 @@
 class Party:
-    def __init__(self, name, id):
+    def __init__(self, name):
         self.name = name 
-        self.id = id
 
     def __init__(self):
         pass
@@ -12,17 +11,15 @@ class Party:
     def name(self):
         return self._name	
     
-    @property
-    def id(self):
-        return self._id	
-    
-
     # setter
     @name.setter
     def name(self, value):
         self._name = value
 
-    @id.setter
-    def id(self, value):
-        self._id = value
+    # to doc
+
+    def to_document(self):
+        doc = {"name": self._name}
+        return doc
+
         
