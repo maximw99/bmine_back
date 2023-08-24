@@ -5,18 +5,49 @@ import objects.comment as Comment
 import objects.party as Party
 import objects.prot as Prot
 import objects.daytopics as Daytopics
-from mongo import *
-import pymongo
+from databank import mongoconnec
 from pymongo.collection import Collection
-import bson
+import os
+
+def debug_singleprot():
+    print("starting")
+    client = get_mongoconnec()
+    db = get_mongodb(client)
+    coll = get_mongocoll(db)
+    speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
+    all_speaker = get_allspeakers(speaker_doc)
+    path = "data"
+    i = 1
+    while i < 2:
+        doc = xml.dom.minidom.parse("data/1900" + str(i) + "-data.xml")
+        test_prot = read_xml(doc, all_speaker)
+        insert_prot(test_prot, coll)
+        print("success")
+        i += 1
 
 
-doc = xml.dom.minidom.parse("Data/19001-data.xml")
-speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
-prot_array = []
+def get_prots():
+    client = mongoconnec.get_mongoconnec()
+    db = mongoconnec.get_mongodb(client)
+    coll = mongoconnec.monoget_mongocoll(db)
+    speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
+    all_speaker = get_allspeakers(speaker_doc)
+    path = "data"
+    counter = 1
+    for file in os.listdir(path):
+        print("now reading prot: ", counter)
+        if not file.endswith("data.xml"): continue
+        root = os.path.join(path, file)
+        doc = xml.dom.minidom.parse(root)
+        counter += 1
+        test_prot = read_xml(doc, all_speaker)
+        insert_prot(test_prot, coll)
+        print("now reading prot: ", counter)
+        print("")
+    print("done")
 
 
-def read_xml(doc: xml.dom.minidom.Document, speaker_doc: xml.dom.minidom.Document):
+def read_xml(doc: xml.dom.minidom.Document, all_speaker):
 
     # get prot with general info
     prot_list = doc.getElementsByTagName("dbtplenarprotokoll")
@@ -31,17 +62,11 @@ def read_xml(doc: xml.dom.minidom.Document, speaker_doc: xml.dom.minidom.Documen
     # get daytopics
     daytopics_array = []
     daytopic_list = doc.getElementsByTagName("tagesordnungspunkt")
-    daytopic_counter = 0
+    daytopic_counter = 1
     for daytopic_node in daytopic_list:
         daytopic = Daytopics.Daytopic()
-        if daytopic_counter > 9:
-            dummy_1 = daytopic_node.getAttribute("top-id")[19]
-            dummy_2 = daytopic_node.getAttribute("top-id")[20]
-            daytopic.nr = dummy_1 + dummy_2
-            daytopic_counter += 1
-        else:
-            daytopic.nr = daytopic_node.getAttribute("top-id")[19]
-            daytopic_counter += 1
+        daytopic.nr = daytopic_counter
+        daytopic_counter += 1
         
         # get speeches
         speeches_array = []
@@ -54,7 +79,8 @@ def read_xml(doc: xml.dom.minidom.Document, speaker_doc: xml.dom.minidom.Documen
             speech_text = ""
             for speech_content in speechescontent_list:
                 if speech_content.getAttribute("klasse") == "J" or speech_content.getAttribute("klasse") == "J_1" or speech_content.getAttribute("klasse") == "O" or speech_content.getAttribute("klasse") == "T":
-                    speech_text += speech_content.firstChild.nodeValue
+                    if speech_content.firstChild != None:
+                        speech_text += speech_content.firstChild.nodeValue
             speech.content = speech_text
 
             # get comments
@@ -69,8 +95,20 @@ def read_xml(doc: xml.dom.minidom.Document, speaker_doc: xml.dom.minidom.Documen
             speaker = Speaker.Speaker()
             speaker_list = speech_node.getElementsByTagName("redner")   
             speaker_node = speaker_list.item(0)
-            speaker.id = speaker_node.getAttribute("id") 
-            speaker = complete_speaker(speaker_doc, speaker)        
+            speaker.id = speaker_node.getAttribute("id")
+            speaker._firstname = "error"  
+            speaker.lastname = "error"
+            speaker.title = "error"
+            speaker.bday = "error"
+            speaker.religion = "error"
+            speaker.jobs = "error"
+            party = Party.Party()
+            party.name = "error"
+            speaker.party = party
+            
+            for speaker_item in all_speaker:
+                if speaker.id == speaker_item.id: 
+                    speaker = speaker_item
 
             # fill speech
             speech.comments = comments
@@ -88,55 +126,65 @@ def read_xml(doc: xml.dom.minidom.Document, speaker_doc: xml.dom.minidom.Documen
     return prot
         
         
-def complete_speaker(doc: xml.dom.minidom.Document, speaker: Speaker.Speaker):
+def get_allspeakers(doc: xml.dom.minidom.Document):
     speaker_list = doc.getElementsByTagName("MDB")
+    all_speaker = []
     for speaker_node in speaker_list:
-        if speaker_node.getElementsByTagName("ID").item(0).firstChild.nodeValue == speaker.id:
+        speaker = Speaker.Speaker()
 
-            # first name
-            speakerfirstname_list = speaker_node.getElementsByTagName("VORNAME")
-            speaker_firstname = speakerfirstname_list.item(0).firstChild.nodeValue
-            speaker.firstname = speaker_firstname
+        #id
+        speakerid_list = speaker_node.getElementsByTagName("ID")
+        speaker_id = speakerid_list.item(0).firstChild.nodeValue
+        speaker.id = speaker_id
 
-            # last name
-            speakerlastname_list = speaker_node.getElementsByTagName("NACHNAME")
-            speaker_lastname = speakerlastname_list.item(0).firstChild.nodeValue
-            speaker.lastname = speaker_lastname
+        # first name
+        speakerfirstname_list = speaker_node.getElementsByTagName("VORNAME")
+        speaker_firstname = speakerfirstname_list.item(0).firstChild.nodeValue
+        speaker.firstname = speaker_firstname
 
-            # titel
-            speakertitle_list = speaker_node.getElementsByTagName("AKAD_TITEL")
-            speaker_title = "keinen Titel"
-            if speakertitle_list.item(0).firstChild != None:
-                speaker_title = speakertitle_list.item(0).firstChild.nodeValue
-            speaker.title = speaker_title
+        # last name
+        speakerlastname_list = speaker_node.getElementsByTagName("NACHNAME")
+        speaker_lastname = speakerlastname_list.item(0).firstChild.nodeValue
+        speaker.lastname = speaker_lastname
 
-            # bday
-            speakerbday_list = speaker_node.getElementsByTagName("GEBURTSDATUM")
-            speaker_bday = speakerbday_list.item(0).firstChild.nodeValue
-            speaker.bday = speaker_bday
+        # titel
+        speakertitle_list = speaker_node.getElementsByTagName("AKAD_TITEL")
+        speaker_title = "keinen Titel"
+        if speakertitle_list.item(0).firstChild != None:
+            speaker_title = speakertitle_list.item(0).firstChild.nodeValue
+        speaker.title = speaker_title
 
-            # religion
-            speakerreligion_list = speaker_node.getElementsByTagName("RELIGION")
-            speaker_religion = "keine Angabe"
-            if speakerreligion_list.item(0).firstChild != None:
-                speaker_religion = speakerreligion_list.item(0).firstChild.nodeValue
-            speaker.religion = speaker_religion
+        # bday
+        speakerbday_list = speaker_node.getElementsByTagName("GEBURTSDATUM")
+        speaker_bday = speakerbday_list.item(0).firstChild.nodeValue
+        speaker.bday = speaker_bday
 
-            # jobs
-            speakerjobs_list = speaker_node.getElementsByTagName("BERUF")
-            speaker_jobs = "keine Angabe"
-            if speakerjobs_list.item(0).firstChild != None:
-                speaker_jobs = speakerjobs_list.item(0).firstChild.nodeValue
-            speaker.jobs = speaker_jobs
+        # religion
+        speakerreligion_list = speaker_node.getElementsByTagName("RELIGION")
+        speaker_religion = "keine Angabe"
+        if speakerreligion_list.item(0).firstChild != None:
+            speaker_religion = speakerreligion_list.item(0).firstChild.nodeValue
+        speaker.religion = speaker_religion
 
-            # party
-            speakerparty_list = speaker_node.getElementsByTagName("PARTEI_KURZ")
+        # jobs
+        speakerjobs_list = speaker_node.getElementsByTagName("BERUF")
+        speaker_jobs = "keine Angabe"
+        if speakerjobs_list.item(0).firstChild != None:
+            speaker_jobs = speakerjobs_list.item(0).firstChild.nodeValue
+        speaker.jobs = speaker_jobs
+
+        # party
+        speakerparty_list = speaker_node.getElementsByTagName("PARTEI_KURZ")
+        if speakerparty_list.item(0).firstChild != None:
             speaker_party = speakerparty_list.item(0).firstChild.nodeValue
-            party = Party.Party()
-            party.name = speaker_party
-            speaker.party = party
+        party = Party.Party()
+        party.name = speaker_party
+        speaker.party = party
 
-    return speaker
+        all_speaker.append(speaker)
+
+    return all_speaker
+
 
 def insert_prot(prot: Prot.Prot, coll: Collection):
     
@@ -185,23 +233,10 @@ def insert_prot(prot: Prot.Prot, coll: Collection):
     # fill prot
     mongo_prot["daytopics"] = mongo_daytopiclist
     
-    print("inserting...")
     coll.insert_one(mongo_prot)
 
 
+#get_prots()
+#debug_singleprot()
 
-
-# Mongo connec
-client = get_mongoconnec()
-db = get_mongodb(client)
-coll = get_mongocoll(db)
-
-
-
-test_prot = read_xml(doc, speaker_doc)
-#complete_speaker(speaker_doc)
-insert_prot(test_prot, coll)
-
-
-
-
+print("hu")
