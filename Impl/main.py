@@ -6,14 +6,15 @@ import objects.party as Party
 import objects.prot as Prot
 import objects.daytopics as Daytopics
 from databank import mongoconnec
+from analysis import sentiment
 from pymongo.collection import Collection
 import os
 
 def debug_singleprot():
     print("starting")
-    client = get_mongoconnec()
-    db = get_mongodb(client)
-    coll = get_mongocoll(db)
+    client = mongoconnec.get_mongoconnec()
+    db = mongoconnec.get_mongodb(client)
+    coll = mongoconnec.get_mongocoll(db)
     speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
     all_speaker = get_allspeakers(speaker_doc)
     path = "data"
@@ -236,7 +237,29 @@ def insert_prot(prot: Prot.Prot, coll: Collection):
     coll.insert_one(mongo_prot)
 
 
+def get_onespeech():
+
+    # get prot
+    print("starting")
+    speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
+    all_speaker = get_allspeakers(speaker_doc)
+    doc = xml.dom.minidom.parse("data/19001-data.xml")
+    prot = read_xml(doc, all_speaker)
+
+    # get daytopic
+    daytopics = prot.daytopics
+    daytopic: Daytopics.Daytopic = daytopics[0]
+
+    #get speech
+    speeches = daytopic.speeches
+    speech: Speech.Speech = speeches[0]
+
+    return speech
+
+
+
+
+
 #get_prots()
 #debug_singleprot()
-
-print("hu")
+sentiment.test_analysis(get_onespeech())
