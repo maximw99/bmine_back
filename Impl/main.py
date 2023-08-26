@@ -243,16 +243,16 @@ def get_onespeech():
     print("starting")
     speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
     all_speaker = get_allspeakers(speaker_doc)
-    doc = xml.dom.minidom.parse("data/19001-data.xml")
+    doc = xml.dom.minidom.parse("data/19002-data.xml")
     prot = read_xml(doc, all_speaker)
 
     # get daytopic
     daytopics = prot.daytopics
-    daytopic: Daytopics.Daytopic = daytopics[0]
+    daytopic: Daytopics.Daytopic = daytopics[1]
 
     #get speech
     speeches = daytopic.speeches
-    speech: Speech.Speech = speeches[0]
+    speech: Speech.Speech = speeches[1]
 
     return speech
 
