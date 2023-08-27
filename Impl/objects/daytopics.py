@@ -1,7 +1,8 @@
 class Daytopic:
-    def __init__(self, nr ,speeches):
+    def __init__(self, nr ,speeches, topic):
         self.nr = nr
         self.speeches = speeches
+        self.topic = topic
 
     def __init__(self):
         pass
@@ -15,6 +16,10 @@ class Daytopic:
     @property
     def speeches(self):
         return self._speeches
+    
+    @property
+    def topic(self):
+        return self._topic
 
     # setter
 
@@ -26,8 +31,12 @@ class Daytopic:
     def speeches(self, value):
         self._speeches = value
 
+    @speeches.setter
+    def topic(self, value):
+        self._topic = value
+
     # to doc
 
     def to_document(self):
-        doc = {"_id": self._nr, "speeches": None}
+        doc = {"_id": self._nr, "speeches": None, "topic": self._topic}
         return doc

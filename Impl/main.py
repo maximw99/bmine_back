@@ -19,7 +19,7 @@ def debug_singleprot():
     all_speaker = get_allspeakers(speaker_doc)
     path = "data"
     i = 1
-    while i < 2:
+    while i < 3:
         doc = xml.dom.minidom.parse("data/1900" + str(i) + "-data.xml")
         test_prot = read_xml(doc, all_speaker)
         insert_prot(test_prot, coll)
@@ -59,15 +59,25 @@ def read_xml(doc: xml.dom.minidom.Document, all_speaker):
     prot.end = prot_node.getAttribute("sitzung-ende-uhrzeit")
     prot.nr = prot_node.getAttribute("sitzung-nr")
     prot.period = prot_node.getAttribute("wahlperiode")
+    ivzblock_list = doc.getElementsByTagName("ivz-block")
 
     # get daytopics
     daytopics_array = []
     daytopic_list = doc.getElementsByTagName("tagesordnungspunkt")
     daytopic_counter = 1
+
     for daytopic_node in daytopic_list:
+        ivz_block = ivzblock_list.item(daytopic_counter - 1)
+        topic_list = ivz_block.getElementsByTagName("ivz-eintrag-inhalt")
+        top = ""
+        for topic in topic_list:
+            if topic.firstChild.nodeValue != None:
+                top += topic.firstChild.nodeValue
         daytopic = Daytopics.Daytopic()
         daytopic.nr = daytopic_counter
+        daytopic.topic = top
         daytopic_counter += 1
+
         
         # get speeches
         speeches_array = []
@@ -269,5 +279,5 @@ def get_testspeech():
 
 
 #get_prots()
-#debug_singleprot()
-sentiment.test_analysis(get_testspeech())
+debug_singleprot()
+#sentiment.test_analysis(get_testspeech())
