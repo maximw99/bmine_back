@@ -22,42 +22,41 @@ def test():
     print([(w.text, w.pos_) for w in doc])
 
 
-def test_analysis(speeches: []):
-
+def vibe_analysis(content: str):
     nlp = spacy.load("de_core_news_sm")
     nlp.add_pipe("sentiws", config={'sentiws_path': 'data/SentiWS_v2.0'})
 
-    for speech in speeches:
-        # start analysis
-        doc = nlp(speech.content)
-        print(speech.id)
-        # pos
-        #print([(w.text, w.pos_, w.dep_) for w in doc])
+    # start analysis
+    doc = nlp(content)
 
-        # sentiment
-        vibe = 0
-        biggest_plus = 0
-        plus = ""
-        biggest_minus = 0
-        minus = ""
-        correct_checked = 0
-        total_checked = 0
-        for token in doc:
-            #print('{}, {}'.format(token.text.replace(",", ""), token._.sentiws))
-            total_checked += 1
-            if token._.sentiws != None:
-                correct_checked += 1
-                vibe += token._.sentiws
-                if token._.sentiws > biggest_plus:
-                    plus = token.text.replace(",", "")
-                    biggest_plus = token._.sentiws
-                if token._.sentiws < biggest_minus:
-                    minus = token.text.replace(",", "")
-                    biggest_minus = token._.sentiws
-        
-        print("")
-        print("vibe is: ", vibe)
-        print("total checked: ", total_checked, " correct checked: ", correct_checked, " missed checked", total_checked - correct_checked)
-        print("biggest + : ", plus, " with:", biggest_plus)
-        print("biggest - : ", minus, " with:", biggest_minus)
-        print("")
+    # pos
+    #print([(w.text, w.pos_, w.dep_) for w in doc])
+
+    # sentiment
+    vibe = 0
+    """ biggest_plus = 0
+    plus = ""
+    biggest_minus = 0
+    minus = "" """
+    correct_checked = 0
+    total_checked = 0
+    for token in doc:
+        #print('{}, {}'.format(token.text.replace(",", ""), token._.sentiws))
+        total_checked += 1
+        if token._.sentiws != None:
+            correct_checked += 1
+            vibe += token._.sentiws
+            """ if token._.sentiws > biggest_plus:
+                plus = token.text.replace(",", "")
+                biggest_plus = token._.sentiws
+            if token._.sentiws < biggest_minus:
+                minus = token.text.replace(",", "")
+                biggest_minus = token._.sentiws
+    print("")
+    print("vibe is: ", vibe)
+    print("total checked: ", total_checked, " correct checked: ", correct_checked, " missed checked", total_checked - correct_checked)
+    print("biggest + : ", plus, " with:", biggest_plus)
+    print("biggest - : ", minus, " with:", biggest_minus)
+    print("") """
+    return vibe
+    

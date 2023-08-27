@@ -1,9 +1,10 @@
 class Speech:
-    def __init__(self, id, speaker, content, comments):
+    def __init__(self, id, speaker, content, comments, vibe):
         self.id = id
         self.speaker = speaker
         self.content = content
         self.comments = comments
+        self.vibe = vibe
 
     def __init__(self):
         pass
@@ -26,6 +27,10 @@ class Speech:
     @property
     def comments(self):
         return self._comments
+    
+    @property
+    def vibe(self):
+        return self._vibe
 
     # setter
 
@@ -45,9 +50,13 @@ class Speech:
     def comments(self, value):
         self._comments = value
 
+    @vibe.setter
+    def vibe(self, value):
+        self._vibe = value
+
     # to doc
 
     def to_document(self):
-        doc = {"_id": self._id, "speaker": None, "content": self._content, "comments": None}
+        doc = {"_id": self._id, "speaker": None, "content": self._content, "comments": None, "vibe": self._vibe}
         return doc
 
