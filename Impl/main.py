@@ -237,24 +237,32 @@ def insert_prot(prot: Prot.Prot, coll: Collection):
     coll.insert_one(mongo_prot)
 
 
-def get_onespeech():
+def get_testspeech():
+    speeches_list = []
 
     # get prot
     print("starting")
     speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
     all_speaker = get_allspeakers(speaker_doc)
-    doc = xml.dom.minidom.parse("data/19002-data.xml")
-    prot = read_xml(doc, all_speaker)
+    i = 1
+    while i < 5:
+        print("read prot: ", i)
+        doc = xml.dom.minidom.parse("data/1900" + str(i) + "-data.xml")
+        prot = read_xml(doc, all_speaker)
 
-    # get daytopic
-    daytopics = prot.daytopics
-    daytopic: Daytopics.Daytopic = daytopics[1]
+        # get daytopic
+        daytopics = prot.daytopics
+        for daytopic in daytopics:
+            print("read daytopic: ", daytopic.nr)
 
-    #get speech
-    speeches = daytopic.speeches
-    speech: Speech.Speech = speeches[1]
-
-    return speech
+        #get speech
+            speeches = daytopic.speeches
+            for speech in speeches:
+                print("reading: ", speech.id)
+                speeches_list.append(speech) 
+        i += 1
+    print(len(speeches_list))
+    return speeches_list
 
 
 
@@ -262,4 +270,4 @@ def get_onespeech():
 
 #get_prots()
 #debug_singleprot()
-sentiment.test_analysis(get_onespeech())
+sentiment.test_analysis(get_testspeech())
