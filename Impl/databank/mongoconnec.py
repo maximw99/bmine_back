@@ -6,12 +6,11 @@ def get_mongoconnec():
     
     file = open("data/pw.txt")
     content = file.readlines()
-    name = content[0]
-    code = content[1]
+    name: str = content[0]
+    code: str = content[1]
     file.close()
-    user = urllib.parse.quote_plus(name)
-    pw = urllib.parse.quote_plus(code)
-    print(user)
+    user = urllib.parse.quote("Maxim")
+    pw = urllib.parse.quote("Mongoserver1")
     client = MongoClient('mongodb://%s:%s@10.77.77.46' % (user, pw), 27017)
     print("connected")
     return client
