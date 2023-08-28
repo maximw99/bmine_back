@@ -5,6 +5,7 @@ from objects import *
 import spacy
 from spacy_sentiws import spaCySentiWS
 
+
 def test():
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
