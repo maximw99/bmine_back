@@ -288,12 +288,12 @@ def insert_prots():
     prots = get_prots()
     mongo_prots = create_mongoprots(prots)
     client = mongoconnec.get_mongoconnec()
-    #db = mongoconnec.get_mongodb(client)
-    #coll = mongoconnec.get_mongocoll(db)
-    #coll.insert_many(mongo_prots)
+    db = mongoconnec.get_mongodb(client)
+    coll = mongoconnec.get_mongocoll(db)
+    coll.insert_many(mongo_prots)
 
 
 
-#insert_prots()
-debug_singleprot()
+insert_prots()
+#debug_singleprot()
 #sentiment.test_analysis(get_testspeech())
