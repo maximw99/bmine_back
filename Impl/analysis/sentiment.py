@@ -4,7 +4,6 @@ from databank import mongoconnec
 from objects import *
 import spacy
 from spacy_sentiws import spaCySentiWS
-#from googletrans import Translator
 
 def test():
     client = mongoconnec.get_mongoconnec()
