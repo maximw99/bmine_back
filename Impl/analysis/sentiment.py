@@ -4,7 +4,7 @@ from databank import mongoconnec
 from objects import *
 import spacy
 from spacy_sentiws import spaCySentiWS
-from googletrans import Translator
+#from googletrans import Translator
 
 def test():
     client = mongoconnec.get_mongoconnec()
@@ -24,11 +24,8 @@ def test():
 
 
 def vibe_analysis(content: str):
-    translator = Translator()
     nlp = spacy.load("de_core_news_sm")
     nlp.add_pipe("sentiws", config={'sentiws_path': 'data/SentiWS_v2.0'})
-    text = translator.translate(content, dest="en")
-    print(text)
 
     # start analysis
     doc = nlp(content)

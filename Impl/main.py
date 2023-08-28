@@ -21,7 +21,9 @@ def debug_singleprot():
     i = 1
     while i < 2:
         doc = xml.dom.minidom.parse("data/1900" + str(i) + "-data.xml")
-        test_prot = read_xml(doc, all_speaker)
+        #test_prot = read_xml(doc, all_speaker)
+        test = {"name": "test1"}
+        coll.insert_one(test)
         print("success")
         i += 1
 
@@ -285,13 +287,13 @@ def get_testspeech():
 def insert_prots():
     prots = get_prots()
     mongo_prots = create_mongoprots(prots)
-    #client = mongoconnec.get_mongoconnec()
+    client = mongoconnec.get_mongoconnec()
     #db = mongoconnec.get_mongodb(client)
     #coll = mongoconnec.get_mongocoll(db)
     #coll.insert_many(mongo_prots)
 
 
 
-insert_prots()
-#debug_singleprot()
+#insert_prots()
+debug_singleprot()
 #sentiment.test_analysis(get_testspeech())
