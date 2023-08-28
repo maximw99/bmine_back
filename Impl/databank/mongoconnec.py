@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 import urllib.parse
-from itertools import islice
 
 def get_mongoconnec():
     
