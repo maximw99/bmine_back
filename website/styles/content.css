@@ -1,0 +1,15 @@
+.content-box{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 1400px;
+    column-gap: 20px;
+    row-gap: 20px;
+    
+}
+
+.content-element {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: bisque;
+}
