@@ -1,5 +1,5 @@
 import sys
-sys.path.append("impl")
+sys.path.append("src/impl")
 from databank import mongoconnec
 from objects import *
 import spacy

@@ -7,6 +7,7 @@ import objects.prot as Prot
 import objects.daytopics as Daytopics
 from databank import mongoconnec
 from analysis import sentiment
+from api import api
 from pymongo.collection import Collection
 import os
 
@@ -297,4 +298,4 @@ def insert_prots():
 #insert_prots()
 #debug_singleprot()
 #sentiment.test_analysis(get_testspeech())
-print("hi")
+api.start_api()
