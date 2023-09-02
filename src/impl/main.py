@@ -294,6 +294,7 @@ def insert_prots():
 
 
 
-insert_prots()
+#insert_prots()
 #debug_singleprot()
 #sentiment.test_analysis(get_testspeech())
+print("hi")
