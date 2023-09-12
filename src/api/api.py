@@ -41,19 +41,24 @@ def all_prot():
 
 
 @app.route("/get-speakerov", methods=["Get"])
-def one_speaker():
+def speaker_ov():
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
     coll = mongoconnec.get_mongocoll(db)
 
-    speaker = speaker()
+    speakers = []
     curr =  coll.find({}).allow_disk_use(True)
+
     for doc in curr:
-        prot: prot = doc
-        print(prot.id)
+        for daytopic in doc["daytopics"]:
+            for speech in daytopic["speeches"]:
+                speaker_obj = speech["speaker"]
+                speakers.append(speaker_obj)
+
+    speakers_json = {"speakers" : speakers}
     client.close()
 
-    return None
+    return jsonify(speakers_json)
 
 
 def test():
@@ -61,15 +66,12 @@ def test():
     db = mongoconnec.get_mongodb(client)
     coll = mongoconnec.get_mongocoll(db)
 
-    speaker_obj: speaker = speaker.Speaker()
     curr =  coll.find({}).allow_disk_use(True)
     for doc in curr:
-        prot: prot = doc
-        print(prot["_id"])
+        prot_obj: prot.Prot = doc
+        print(prot_obj["_id"])
     client.close()
 
-
-test()
 
 def start_api():
     app.run(debug=True)
