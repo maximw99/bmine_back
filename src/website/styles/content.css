@@ -1,7 +1,7 @@
 .content-frame{
     display: grid;
     grid-template-columns: 1fr;
-    height: 1400px;
+    grid-template-rows: 1fr;
     column-gap: 20px;
     row-gap: 20px;
 }
@@ -9,8 +9,8 @@
 .content-box {
     display: grid;
     grid-template-columns: 400px auto;
-    grid-template-rows: 100px 300px auto;
-    background-color: bisque;
+    grid-template-rows: 100px 300px 300px auto;
+    background-color: darksalmon;
 }
 
 .search-bar{
@@ -40,5 +40,14 @@
     grid-column-end: 2;
     grid-row-start: 3;
 
+}
+
+.chart{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-column-start: 2;
+    grid-row-start: 3;
+    padding: 10px;
 }
 

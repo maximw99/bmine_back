@@ -49,16 +49,41 @@ def speaker_ov():
     speakers = []
     curr =  coll.find({}).allow_disk_use(True)
 
+    url = "jajajja"
+
     for doc in curr:
         for daytopic in doc["daytopics"]:
             for speech in daytopic["speeches"]:
                 speaker_obj = speech["speaker"]
+                speaker_obj.update({"url":url})
                 speakers.append(speaker_obj)
 
     speakers_json = {"speakers" : speakers}
     client.close()
 
     return jsonify(speakers_json)
+
+
+@app.route("/get-speechesov", methods=["Get"])
+def speeches_ov():
+    client = mongoconnec.get_mongoconnec()
+    db = mongoconnec.get_mongodb(client)
+    coll = mongoconnec.get_mongocoll(db)
+
+    speeches = []
+    curr =  coll.find({}).allow_disk_use(True)
+
+    for doc in curr:
+        for daytopic in doc["daytopics"]:
+            for speech in daytopic["speeches"]:
+                speeches.append(speech)
+
+    speeches_json = {"speeches" : speeches}
+    client.close()
+
+    return(jsonify(speeches_json))
+
+
 
 
 def test():

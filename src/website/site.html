@@ -7,11 +7,9 @@
     <link rel="stylesheet" href="styles/header.css">
     <link rel="stylesheet" href="styles/content.css">
     <link rel="stylesheet" href="styles/general.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
-    <script src="functions.js"></script>
+    
 </head>
-<body class="body">
+<body class="body" style="background-color: darkgoldenrod;">
 
     <div class="header">
         <div class="welcome">
@@ -41,12 +39,18 @@
                 <img src="images/solms.jpg">
             </div>
 
-            <dic class="info">
+            <div class="info">
                 <p id="name"></p>
                 <p id="party"></p>
                 <p id="bday"></p>
                 <p id="fill"></p>
-            </dic>
+            </div>
+
+            <div class="chart">
+                <canvas id="pie">
+            </div>
+
+            </canvas>
 
         </div>
 
@@ -65,6 +69,10 @@
     </div>
 
 
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
+    <script src="functions.js"></script>
+    <script src="charts.js"></script>
 </body>
 </html>
