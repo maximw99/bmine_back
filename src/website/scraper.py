@@ -3,24 +3,36 @@ import urllib.request
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
-def get_imageurl(speaker_name):
+def get_imageurl(speakers):
 
-    items = 0
+    pairs = []
     image = "no found"
 
-    for i in range(0, 750, 10):
-        url = "https://www.bundestag.de/ajax/filterlist/de/abgeordnete/862712-862712?limit=20&noFilterSet=true&offset=" + str(i)
-        page = urlopen(url)
-        page_soup = BeautifulSoup(page, "html.parser")
-        img_items = page_soup.findAll("div",{"class" : "bt-bild-standard"})
+    for i in range(0, 750, 12):
+        print("connecting with: ", i)
 
-        for div_obj in img_items:
-            image_url = "bundestag.de" + str(div_obj.find("img")["data-img-md-normal"])
-            scraper_name = div_obj.find("img")["title"]
-            
-            if speaker_name == scraper_name:
-                image = image_url
+        try:
+            url = "https://www.bundestag.de/ajax/filterlist/de/abgeordnete/862712-862712?limit=20&noFilterSet=true&offset=" + str(i)
+            page = urlopen(url)
+            page_soup = BeautifulSoup(page, "html.parser")
+            img_items = page_soup.findAll("div",{"class" : "bt-bild-standard"})
+            counter_divblocks = 0
 
-    return image 
+            for div_obj in img_items:
+                pair = ()
+                image_url = "https://www.bundestag.de" + str(div_obj.find("img")["data-img-md-normal"])
+                scraper_name = div_obj.find("img")["title"]
 
-get_imageurl("Alice Weidel")
+                counter_speaker = 0
+                for speaker in speakers:
+                    if speaker[0] == scraper_name:
+                        pair = (speaker[0], speaker[1], speaker[2], speaker[3], image_url)
+                        pairs.append(pair)
+                    print("speaker: " + str(counter_speaker) + " in: " + str(counter_divblocks) + " of: " + "12 div blocks with: " + str(i) + " of 62 done")
+                    counter_speaker += 1
+                counter_divblocks += 1
+
+        except:
+            print("Error")
+
+    return pairs

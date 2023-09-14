@@ -40,30 +40,6 @@ def all_prot():
     return jsonify(prots_json)
 
 
-@app.route("/get-speakerov", methods=["Get"])
-def speaker_ov():
-    client = mongoconnec.get_mongoconnec()
-    db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
-
-    speakers = []
-    curr =  coll.find({}).allow_disk_use(True)
-
-    url = "jajajja"
-
-    for doc in curr:
-        for daytopic in doc["daytopics"]:
-            for speech in daytopic["speeches"]:
-                speaker_obj = speech["speaker"]
-                speaker_obj.update({"url":url})
-                speakers.append(speaker_obj)
-
-    speakers_json = {"speakers" : speakers}
-    client.close()
-
-    return jsonify(speakers_json)
-
-
 @app.route("/get-speechesov", methods=["Get"])
 def speeches_ov():
     client = mongoconnec.get_mongoconnec()
@@ -82,7 +58,6 @@ def speeches_ov():
     client.close()
 
     return(jsonify(speeches_json))
-
 
 
 
