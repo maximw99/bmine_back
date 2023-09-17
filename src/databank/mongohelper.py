@@ -91,9 +91,12 @@ def add_url():
 
     pairs = scraper.get_imageurl(speakers)
     #f = open("test.txt", "a")
+    update_counter = 0
     for pair in  pairs:
+        print("update: " + str(update_counter) + " of: " + str(len(pairs)))
         #f.write(str(pair[0]) + " " + str(pair[1]) + " " + str(pair[2]) + " " + str(pair[3]) + " " + pair[4] + "\n")
         coll.update_one({"_id" : str(pair[1])}, {"$set": {"daytopics." + str(pair[2]) + ".speeches." + str(pair[3]) + ".speaker.url" : pair[4]}})
+        update_counter += 1
     #f.close()
 
 
