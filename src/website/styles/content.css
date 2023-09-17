@@ -15,11 +15,15 @@
 
 .search-bar{
     display: flex;
-    align-items: center;
+    align-items: center; 
     justify-content: center;
     gap: 10px;
     grid-column-start: 1;
     grid-column-end: 3;
+
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
 }
 
 .portrait{
@@ -30,6 +34,10 @@
     grid-column-end: 2;
     grid-row-start: 2;
     grid-row-end: 3;
+
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
 }
 
 .info{
@@ -40,6 +48,10 @@
     grid-column-end: 2;
     grid-row-start: 3;
 
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+
 }
 
 .chart{
@@ -47,7 +59,12 @@
     align-items: center;
     justify-content: center;
     grid-column-start: 2;
-    grid-row-start: 3;
+    grid-row-start: 2;
+    grid-row-end: 4;
     padding: 10px;
+
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
 }
 

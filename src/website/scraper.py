@@ -7,6 +7,7 @@ def get_imageurl(speakers):
 
     pairs = []
     image = "no found"
+    search_counter = 0
 
     for i in range(0, 750, 12):
         print("connecting with: ", i)
@@ -28,11 +29,13 @@ def get_imageurl(speakers):
                     if speaker[0] == scraper_name:
                         pair = (speaker[0], speaker[1], speaker[2], speaker[3], image_url)
                         pairs.append(pair)
-                    print("speaker: " + str(counter_speaker) + " in: " + str(counter_divblocks) + " of: " + "12 div blocks with: " + str(i) + " of 62 done")
+                    print("speaker: " + str(counter_speaker) + " in: " + str(counter_divblocks) + " of: " + "12 div blocks with: " + str(search_counter) + " of 62 done")
                     counter_speaker += 1
                 counter_divblocks += 1
 
         except:
             print("Error")
+
+        search_counter += 1
 
     return pairs
