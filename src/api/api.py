@@ -60,17 +60,27 @@ def speeches_ov():
     return(jsonify(speeches_json))
 
 
-
+@app.route("/get-speakersov", methods=["Get"])
 def test():
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
     coll = mongoconnec.get_mongocoll(db)
 
+    speakers = []
     curr =  coll.find({}).allow_disk_use(True)
+
     for doc in curr:
-        prot_obj: prot.Prot = doc
-        print(prot_obj["_id"])
+        for daytopic in doc["daytopics"]:
+            for speech in daytopic["speeches"]:
+                try:
+                    speakers.append(speech["speaker"])
+                except:
+                    pass
+
+    speeches_json = {"speakers" : speakers}
     client.close()
+
+    return(jsonify(speeches_json))
 
 
 def start_api():

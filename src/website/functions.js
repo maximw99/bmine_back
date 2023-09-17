@@ -1,6 +1,6 @@
 function get_speakerinfo(){
     $.ajax({
-        url: "http://127.0.0.1:5000/get-speechesov",
+        url: "http://127.0.0.1:5000/get-speakersov",
         type: 'GET',
         async: true,
         dataType: "json",
@@ -10,13 +10,15 @@ function get_speakerinfo(){
             var name = ""
             var party = ""
             var bday = ""
+            url = ""
             var speech_count = 0
 
-            for(var i=0; i < data.speeches.length; i++){
-                if(id == data.speeches[i].speaker._id){
-                    name = data.speeches[i].speaker.firstname + " " + data.speeches[i].speaker.lastname
-                    party = data.speeches[i].speaker.party.name
-                    bday = data.speeches[i].speaker.bday
+            for(var i=0; i < data.speakers.length; i++){
+                if(id == data.speakers[i]._id){
+                    name = data.speakers[i].firstname + " " + data.speakers[i].lastname
+                    party = data.speakers[i].party.name
+                    bday = data.speakers[i].bday
+                    url = data.speakers[i].url
                     speech_count++
                 }
             }
@@ -24,6 +26,7 @@ function get_speakerinfo(){
             $("#party").append(party)
             $("#bday").append(bday)
             $("#fill").append("speeches amount: " + speech_count)
+            $("#speaker-port").attr("src", url)
 
         },
         failure: function(_xhr, text, error){

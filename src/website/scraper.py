@@ -21,7 +21,7 @@ def get_imageurl(speakers):
 
             for div_obj in img_items:
                 pair = ()
-                image_url = "https://www.bundestag.de" + str(div_obj.find("img")["data-img-md-normal"])
+                image_url = str(div_obj.find("img")["data-img-md-normal"])
                 scraper_name = div_obj.find("img")["title"]
 
                 counter_speaker = 0
