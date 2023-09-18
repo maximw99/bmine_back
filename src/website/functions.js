@@ -22,11 +22,12 @@ function get_speakerinfo(){
                     speech_count++
                 }
             }
-            $("#name").append(name)
-            $("#party").append(party)
-            $("#bday").append(bday)
-            $("#fill").append("speeches amount: " + speech_count)
-            $("#speaker-port").attr("src", url)
+            
+            $("#name").html(name)
+            $("#party").html(party)
+            $("#bday").html(bday)
+            $("#fill").html("speeches amount: " + speech_count)
+            $("#speaker-port").attr("src", "http://www.bundestag.de" + url)
 
         },
         failure: function(_xhr, text, error){

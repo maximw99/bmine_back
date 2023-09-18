@@ -2,6 +2,8 @@ import sys
 sys.path.append("src")
 from databank import mongoconnec
 from website import scraper
+from main import get_allspeakers
+import xml.dom.minidom
 
 
 def mongo_add():
@@ -101,35 +103,88 @@ def add_url():
 
 
 def add_urldummy():
-
     print("connecting...")
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
+    coll = mongoconnec.get_mongocollspeakers(db)
 
     curr =  coll.find({}).allow_disk_use(True)
     print("connected")
-    z = 0
+    speakers = []
 
-    for doc in curr:
-        doc_id = doc["_id"]
-        daytopic_inc = 0
-        for daytopic in doc["daytopics"]:
-            speeches_inc = 0
-            for speech in daytopic["speeches"]:
-                if daytopic_inc == 2:
-                    print("holla")
-                try:
-                    coll.update_one({"_id" : doc_id}, {"$set": {"daytopics." + str(daytopic_inc) + ".speeches." + str(speeches_inc) + ".speaker.url":"no found"}})
-                except:
-                    print("error")
-                print("next")
-                speeches_inc += 1
-            daytopic_inc += 1
-        print("doc: " + str(z) + " " + "done")
-        z += 1
-            
-#add_urldummy()
-add_url()
+    for speaker in curr:
+
+        #add dummy url
+        #coll.update_one({"_id" : str(speaker["_id"])}, {"$set": {"url" : "no"}})
+
+        speaker_id = speaker["_id"]
+        speaker_name = speaker["firstname"] + " " + speaker["lastname"]
+        speakers.append((speaker_id, speaker_name))
+        print("doc done")
+    print(len(speakers))
+
+    pairs = scraper.get_imageurlsecond(speakers)
+    #f = open("test.txt", "a")
+    update_counter = 0
+    for pair in  pairs:
+        #print(pair)
+        print("update: " + str(update_counter) + " of: " + str(len(pairs)))
+        #f.write(str(pair[0]) + " " + str(pair[1]) + " " + str(pair[2]) + " " + str(pair[3]) + " " + pair[4] + "\n")
+        coll.update_one({"_id" : str(pair[0])}, {"$set": {"url" : pair[1]}})
+        update_counter += 1
+    #f.close()
 
 
+def add_speakers():
+    speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
+    speakers = get_allspeakers(speaker_doc)
+    mongo_speakers = []
+    for speaker in speakers:
+        mongo_speaker = speaker.to_document()
+        mongo_speakers.append(mongo_speaker)
+    client = mongoconnec.get_mongoconnec()
+    db = mongoconnec.get_mongodb(client)
+    coll = mongoconnec.get_mongocollspeakers(db)
+    coll.insert_many(mongo_speakers)
+
+
+def add_speakersentiment():
+    client = mongoconnec.get_mongoconnec()
+    db = mongoconnec.get_mongodb(client)
+    coll_speakers = mongoconnec.get_mongocollspeakers(db)
+    coll_prots = mongoconnec.get_mongocoll(db)
+
+    prots = []
+
+    for doc in coll_prots.find({}).allow_disk_use(True): 
+        prots.append(doc)
+
+    for speaker in coll_speakers.find({}).allow_disk_use(True):
+        positive = 0
+        negative = 0
+        neutral = 0
+        speech_count = 0
+        for prot in prots:
+            for daytopic in prot["daytopics"]:
+                for speech in daytopic["speeches"]:
+                    try:
+                        if speaker["_id"] == speech["speaker"]["_id"]:
+                            speech_count += 1
+                            try:
+                                if speech["vibe"] < -0.1:
+                                    negative += 1
+                                elif speech["vibe"] > 0.1:
+                                    positive += 1
+                                else:
+                                    neutral += 1
+                            except:
+                                pass
+                    except:
+                        pass
+                        
+        coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"speeches" : speech_count}})
+        coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"positive" : positive}})
+        coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"negative" : negative}})
+        coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"neutral" : neutral}})
+
+add_speakersentiment()

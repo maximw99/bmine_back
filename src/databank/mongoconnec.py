@@ -22,3 +22,7 @@ def get_mongocoll(db):
     coll = db.prots
     return coll
 
+def get_mongocollspeakers(db):
+    coll = db.speakers
+    return coll
+

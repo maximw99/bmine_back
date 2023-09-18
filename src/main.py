@@ -298,4 +298,4 @@ def insert_prots():
 #insert_prots()
 #debug_singleprot()
 #sentiment.test_analysis(get_testspeech())
-api.start_api()
+#api.start_api()
