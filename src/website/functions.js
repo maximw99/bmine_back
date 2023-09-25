@@ -10,16 +10,16 @@ function get_speakerinfo(){
             var name = ""
             var party = ""
             var bday = ""
-            url = ""
-            var speech_count = 0
+            var url = ""
+            var speech_count = ""
 
             for(var i=0; i < data.speakers.length; i++){
                 if(id == data.speakers[i]._id){
                     name = data.speakers[i].firstname + " " + data.speakers[i].lastname
-                    party = data.speakers[i].party.name
+                    party = data.speakers[i].party
                     bday = data.speakers[i].bday
                     url = data.speakers[i].url
-                    speech_count++
+                    speech_count = data.speakers[i].speeches
                 }
             }
             

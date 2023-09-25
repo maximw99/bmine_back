@@ -115,33 +115,21 @@ def add_urldummy():
     for speaker in curr:
 
         #add dummy url
-        #coll.update_one({"_id" : str(speaker["_id"])}, {"$set": {"url" : "no"}})
-
-        speaker_id = speaker["_id"]
-        speaker_name = speaker["firstname"] + " " + speaker["lastname"]
-        speakers.append((speaker_id, speaker_name))
-        print("doc done")
-    print(len(speakers))
-
-    pairs = scraper.get_imageurlsecond(speakers)
-    #f = open("test.txt", "a")
-    update_counter = 0
-    for pair in  pairs:
-        #print(pair)
-        print("update: " + str(update_counter) + " of: " + str(len(pairs)))
-        #f.write(str(pair[0]) + " " + str(pair[1]) + " " + str(pair[2]) + " " + str(pair[3]) + " " + pair[4] + "\n")
-        coll.update_one({"_id" : str(pair[0])}, {"$set": {"url" : pair[1]}})
-        update_counter += 1
-    #f.close()
+        coll.update_one({"_id" : str(speaker["_id"])}, {"$set": {"url" : "no"}})
 
 
 def add_speakers():
     speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
     speakers = get_allspeakers(speaker_doc)
     mongo_speakers = []
+    i = 0
     for speaker in speakers:
         mongo_speaker = speaker.to_document()
         mongo_speakers.append(mongo_speaker)
+        print(i)
+        i += 1
+
+
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
     coll = mongoconnec.get_mongocollspeakers(db)
@@ -187,4 +175,32 @@ def add_speakersentiment():
         coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"negative" : negative}})
         coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"neutral" : neutral}})
 
-add_speakersentiment()
+def add_speakersurl():
+    client = mongoconnec.get_mongoconnec()
+    db = mongoconnec.get_mongodb(client)
+    coll_speakers = mongoconnec.get_mongocollspeakers(db)
+    coll_prots = mongoconnec.get_mongocoll(db)
+
+    prots = []
+
+    for doc in coll_prots.find({}).allow_disk_use(True): 
+        prots.append(doc)
+
+    for speaker in coll_speakers.find({}).allow_disk_use(True):
+        positive = 0
+        negative = 0
+        neutral = 0
+        speech_count = 0
+        for prot in prots:
+            for daytopic in prot["daytopics"]:
+                for speech in daytopic["speeches"]:
+                    try:
+                        if speaker["_id"] == speech["speaker"]["_id"]:
+                            url = speech["speaker"]["url"]
+                            coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"url" : url}})
+                            continue
+                    except:
+                        pass
+                        
+
+add_speakersurl()

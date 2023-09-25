@@ -136,52 +136,19 @@ def speakers_ov():
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
     coll_speakers = mongoconnec.get_mongocollspeakers(db)
-    coll_prots = mongoconnec.get_mongocoll(db)
 
     speakers = []
-    prots = []
 
-    for doc in coll_prots.find({}).allow_disk_use(True): 
-        prots.append(doc)
-
-    for speaker in coll_speakers.find({}).allow_disk_use(True):
-        positive = 0
-        negative = 0
-        neutral = 0
-        speech_count = 0
-        for prot in prots:
-            for daytopic in prot["daytopics"]:
-                for speech in daytopic["speeches"]:
-                    try:
-                        if speaker["_id"] == speech["speaker"]["_id"]:
-                            speech_count += 1
-                            try:
-                                if speech["vibe"] < -0.5:
-                                    negative += 1
-                                elif speech["vibe"] > 0.5:
-                                    positive += 1
-                                else:
-                                    neutral += 1
-                            except:
-                                pass
-                    except:
-                        pass
-                    
-        print("speaker done")
-        speaker["speeches"] = speech_count
-        speaker["positive"] = positive
-        speaker["negative"] = negative
-        speaker["neutral"] = neutral
+    for speaker in coll_speakers.find({}).allow_disk_use(True): 
         speakers.append(speaker)
-
-
-
-
 
     speakers_json = {"speakers" : speakers}
     client.close()
 
     return(jsonify(speakers_json))
 
+
 def start_api():
     app.run(debug=True)
+
+start_api()
