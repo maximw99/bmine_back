@@ -150,5 +150,3 @@ def speakers_ov():
 
 def start_api():
     app.run(debug=True)
-
-start_api()

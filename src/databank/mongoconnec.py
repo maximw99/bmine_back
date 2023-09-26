@@ -18,7 +18,7 @@ def get_mongodb(client):
     db = client.bundestag
     return db
 
-def get_mongocoll(db):
+def get_mongocollprots(db):
     coll = db.prots
     return coll
 

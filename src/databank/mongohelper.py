@@ -6,69 +6,13 @@ from main import get_allspeakers
 import xml.dom.minidom
 
 
-def mongo_add():
 
+
+def mongoadd_url():
     print("connecting...")
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
-
-    curr =  coll.find({}).allow_disk_use(True)
-    print("connected")
-
-    """ for doc in curr:
-        doc_id = doc["_id"]
-        daytopic_inc = 0
-        speeches_inc = 0
-        for daytopic in doc["daytopics"]:
-            for speech in daytopic["speeches"]:
-                speaker_obj = speech["speaker"]
-                speaker_name = speaker_obj["firstname"] + " " + speaker_obj["lastname"]
-                print(speaker_name)
-                url = scraper.get_imageurl(speaker_name)
-                print(url)
-                print("next")
-
-                speeches_inc =+ 1 """
-
-    doc = curr[0]
-    doc_id = doc["_id"]
-    daytopic_inc = 0
-    speeches_inc = 0
-    for daytopic in doc["daytopics"]:
-        for speech in daytopic["speeches"]:
-            speaker_obj = speech["speaker"]
-            speaker_name = speaker_obj["firstname"] + " " + speaker_obj["lastname"]
-            print(speaker_name)
-            url = scraper.get_imageurl(speaker_name)
-            print(url)
-            coll.update_one({"_id" : doc_id}, {"$set": {"daytopics." + str(daytopic_inc) + ".speeches." + str(speeches_inc) + ".speaker.url":url}})
-            print("next")
-
-            speeches_inc =+ 1
-        daytopic_inc =+ 1
-            
-
-
-
-
-
-
-    #test = coll.find_one({"_id" : "19-1"})
-
-    #coll.update_one({"_id" : "19-1"}, {"$set": {"daytopics.0.speeches.0.speaker.test":1}})
-
-    #coll.update_one({"_id" : "19-1"}, {"$unset": {"test":1}})
-
-    client.close()
-    print("done")
-
-
-def add_url():
-    print("connecting...")
-    client = mongoconnec.get_mongoconnec()
-    db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
+    coll = mongoconnec.get_mongocollprots(db)
 
     curr =  coll.find({}).allow_disk_use(True)
     print("connected")
@@ -102,7 +46,7 @@ def add_url():
     #f.close()
 
 
-def add_urldummy():
+def mongoadd_urldummy():
     print("connecting...")
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
@@ -118,7 +62,7 @@ def add_urldummy():
         coll.update_one({"_id" : str(speaker["_id"])}, {"$set": {"url" : "no"}})
 
 
-def add_speakers():
+def mongoadd_speakers():
     speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
     speakers = get_allspeakers(speaker_doc)
     mongo_speakers = []
@@ -136,7 +80,7 @@ def add_speakers():
     coll.insert_many(mongo_speakers)
 
 
-def add_speakersentiment():
+def mongoadd_speakersentiment():
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
     coll_speakers = mongoconnec.get_mongocollspeakers(db)
@@ -175,7 +119,8 @@ def add_speakersentiment():
         coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"negative" : negative}})
         coll_speakers.update_one({"_id" : str(speaker["_id"])}, {"$set": {"neutral" : neutral}})
 
-def add_speakersurl():
+
+def mongoadd_speakersurl():
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
     coll_speakers = mongoconnec.get_mongocollspeakers(db)
@@ -201,6 +146,4 @@ def add_speakersurl():
                             continue
                     except:
                         pass
-                        
-
-add_speakersurl()
+                
