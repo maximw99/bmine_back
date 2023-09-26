@@ -9,7 +9,7 @@ function pie_chart(){
             ],
             datasets: [{
                 label: "dataset",
-                data: [300, 50, 100],
+                data: [],
                 backgroundColor: [
                     'rgb(255, 99, 132)',
                     'rgb(54, 162, 235)',

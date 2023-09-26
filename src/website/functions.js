@@ -29,6 +29,19 @@ function get_speakerinfo(){
             $("#fill").html("speeches amount: " + speech_count)
             $("#speaker-port").attr("src", "http://www.bundestag.de" + url)
 
+            var place = document.getElementById("pie")
+            var chart = new Chart(place, {
+                type:"pie",
+                data: {
+                    labels:["june", "tune"],
+                    datasets: [{
+                        label:"satz1",
+                        data:[1,3],
+                        backgroundColor:["blue", "purple"]
+        }]
+    }
+})
+
         },
         failure: function(_xhr, text, error){
             console.log(text);
@@ -38,18 +51,7 @@ function get_speakerinfo(){
 }
 
 
-var place = document.getElementById("pie")
-var chart = new Chart(place, {
-    type:"pie",
-    data: {
-        labels:["june", "tune"],
-        datasets: [{
-            label:"satz1",
-            data:[1,3],
-            backgroundColor:["blue", "purple"]
-        }]
-    }
-})
+
 
 
 
