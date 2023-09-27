@@ -2,8 +2,9 @@ import sys
 sys.path.append("src")
 from databank import mongoconnec
 from website import scraper
-from main import get_allspeakers
+from databank import core
 import xml.dom.minidom
+from objects import party as Party
 
 
 
@@ -64,7 +65,7 @@ def mongoadd_urldummy():
 
 def mongoadd_speakers():
     speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
-    speakers = get_allspeakers(speaker_doc)
+    speakers = core.get_allspeakers(speaker_doc)
     mongo_speakers = []
     i = 0
     for speaker in speakers:
@@ -146,4 +147,58 @@ def mongoadd_speakersurl():
                             continue
                     except:
                         pass
-                
+
+
+def mongoadd_partys():
+    client = mongoconnec.get_mongoconnec()
+    db = mongoconnec.get_mongodb(client)
+    coll_prots = mongoconnec.get_mongocollprots(db)
+    coll_speakers = mongoconnec.get_mongocollspeakers(db)
+    coll_partys = mongoconnec.get_mongocollpartys(db)
+    partys = []
+    
+    curr = coll_prots.find({}).allow_disk_use(True)
+    for prot in curr:
+        for daytopic in prot["daytopics"]:
+            for speech in daytopic["speeches"]:
+                try:
+                    party = speech["speaker"]["party"]
+                    partys.append(party["name"])
+                except:
+                    pass
+
+    #print(list(dict.fromkeys(partys)))
+    partys_solo = list(dict.fromkeys(partys))
+    partys_fixed = []
+    mongo_partys = []
+    
+    for party in partys_solo:
+        counter = 0
+        vibe = 0
+        vibe_counter = 0
+        curr_2 = coll_prots.find({}).allow_disk_use(True)
+        for prot in curr_2:
+            for daytopic in prot["daytopics"]:
+                for speech in daytopic["speeches"]:
+                    try:
+                        if party == speech["speaker"]["party"]["name"]:
+                            print("hit!")
+                            counter += 1
+                            vibe += speech["vibe"]
+                            vibe_counter += 1
+                    except:
+                        print("error")
+        mongo_party = Party.Party(party, round(vibe/vibe_counter,4), counter)
+        partys_fixed.append(mongo_party)
+
+    for party in partys_fixed:
+        mongo_partys.append(party.to_document())
+    
+    coll_partys.insert_many(mongo_partys)
+        
+
+
+    #coll.insert_many(mongo_speakers)
+
+
+mongoadd_partys()

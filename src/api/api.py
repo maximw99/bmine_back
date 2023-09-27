@@ -60,50 +60,6 @@ def speeches_ov():
     return(jsonify(speeches_json))
 
 
-@app.route("/get-test", methods=["Get"])
-def test():
-    client = mongoconnec.get_mongoconnec()
-    db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
-
-    speakers = []
-    curr =  coll.find({}).allow_disk_use(True)
-
-    for doc in curr:
-        for daytopic in doc["daytopics"]:
-            for speech in daytopic["speeches"]:
-
-                #get vibe
-                positive = 0
-                negative = 0
-                neutral = 0
-                try:
-                    if speech["vibe"] > 0.5:
-                        positiv += 1
-                    elif speech["vibe"] < -0.5:
-                        negativ += 1
-                    else:
-                        neutral += 1
-                except:
-                    pass
-
-                # get speaker
-                try:
-                    speaker = speech["speaker"]
-                    speaker["sui"] = "suiiii"
-                    speaker["positive"] = positive
-                    speaker["negative"] = negative
-                    speaker["neutral"] = neutral
-                    speakers.append(speaker)
-                except:
-                    pass
-
-    speeches_json = {"speakers" : speakers}
-    client.close()
-
-    return(jsonify(speeches_json))
-
-
 @app.route("/get-speakersovtest", methods=["Get"])
 def speakers_ovtest():
     client = mongoconnec.get_mongoconnec()

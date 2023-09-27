@@ -26,3 +26,7 @@ def get_mongocollspeakers(db):
     coll = db.speakers
     return coll
 
+def get_mongocollpartys(db):
+    coll = db.partys
+    return coll
+
