@@ -1,34 +1,19 @@
+#general imports
 import sys
+import os
 sys.path.append("src")
+
+#import dom parser
 import xml.dom.minidom
+
+#class objects import
 from objects import speech as Speech
 from objects import speaker as Speaker
 from objects import comment as Comment
 from objects import party as Party
 from objects import prot as Prot
 from objects import daytopics as Daytopics
-from databank import mongoconnec
-from analysis import sentiment
-from pymongo.collection import Collection
-import os
 
-
-def debug_singleprot():
-    print("starting")
-    client = mongoconnec.get_mongoconnec()
-    db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
-    speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
-    all_speaker = get_allspeakers(speaker_doc)
-    path = "data"
-    i = 1
-    while i < 2:
-        doc = xml.dom.minidom.parse("data/1900" + str(i) + "-data.xml")
-        #test_prot = read_xml(doc, all_speaker)
-        test = {"name": "test1"}
-        coll.insert_one(test)
-        print("success")
-        i += 1
 
 
 def get_prots():
@@ -97,8 +82,7 @@ def read_xml(doc: xml.dom.minidom.Document, all_speaker):
                     if speech_content.firstChild != None:
                         speech_text += speech_content.firstChild.nodeValue
             speech.content = speech_text
-            speech.vibe = sentiment.vibe_analysis(speech.content)
-            #speech.vibe = 0
+            speech.vibe = 0
 
             # get comments
             comments = []
@@ -119,9 +103,7 @@ def read_xml(doc: xml.dom.minidom.Document, all_speaker):
             speaker.bday = "error"
             speaker.religion = "error"
             speaker.jobs = "error"
-            party = Party.Party()
-            party.name = "error"
-            speaker.party = party
+            speaker.party = "error"
             
             for speaker_item in all_speaker:
                 if speaker.id == speaker_item.id: 
@@ -195,10 +177,7 @@ def get_allspeakers(doc: xml.dom.minidom.Document):
         # party
         speakerparty_list = speaker_node.getElementsByTagName("PARTEI_KURZ")
         if speakerparty_list.item(0).firstChild != None:
-            speaker_party = speakerparty_list.item(0).firstChild.nodeValue
-        party = Party.Party()
-        party.name = speaker_party
-        speaker.party = party
+            speaker.party = speakerparty_list.item(0).firstChild.nodeValue
 
         all_speaker.append(speaker)
 
@@ -257,40 +236,3 @@ def create_mongoprots(prots: []):
     
     print("mongoprots complete")
     return(mongo_prots)
-
-
-def get_testspeech():
-    speeches_list = []
-
-    # get prot
-    print("starting")
-    speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
-    all_speaker = get_allspeakers(speaker_doc)
-    i = 1
-    while i < 5:
-        print("read prot: ", i)
-        doc = xml.dom.minidom.parse("data/1900" + str(i) + "-data.xml")
-        prot = read_xml(doc, all_speaker)
-
-        # get daytopic
-        daytopics = prot.daytopics
-        for daytopic in daytopics:
-            print("read daytopic: ", daytopic.nr)
-
-        #get speech
-            speeches = daytopic.speeches
-            for speech in speeches:
-                print("reading: ", speech.id)
-                speeches_list.append(speech) 
-        i += 1
-    print(len(speeches_list))
-    return speeches_list
-
-
-def insert_prots():
-    prots = get_prots()
-    mongo_prots = create_mongoprots(prots)
-    client = mongoconnec.get_mongoconnec()
-    db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
-    coll.insert_many(mongo_prots)

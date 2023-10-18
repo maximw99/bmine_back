@@ -3,6 +3,8 @@ sys.path.append("src")
 from databank import mongoconnec
 from website import scraper
 from databank import core
+from core import get_prots
+from core import create_mongoprots
 import xml.dom.minidom
 from objects import party as Party
 
@@ -201,4 +203,10 @@ def mongoadd_partys():
     #coll.insert_many(mongo_speakers)
 
 
-mongoadd_partys()
+def mongoadd_prots():
+    prots = get_prots()
+    mongo_prots = create_mongoprots(prots)
+    client = mongoconnec.get_mongoconnec()
+    db = mongoconnec.get_mongodb(client)
+    coll = mongoconnec.get_mongocollprots(db)
+    coll.insert_many(mongo_prots)

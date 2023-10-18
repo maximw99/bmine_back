@@ -1,7 +1,5 @@
-from api import api
+from databank import core
+from databank import mongoconnec
 
-#api.start_api()
-
-for i in range(0,100000):
-    print("hello")
-
+#core.get_testspeech()
+print(mongoconnec.get_mongoconnec.__doc__)
