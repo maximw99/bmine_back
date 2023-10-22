@@ -3,8 +3,6 @@ sys.path.append("src")
 from databank import mongoconnec
 from website import scraper
 from databank import core
-from core import get_prots
-from core import create_mongoprots
 import xml.dom.minidom
 from objects import party as Party
 
@@ -71,8 +69,11 @@ def mongoadd_speakers():
     mongo_speakers = []
     i = 0
     for speaker in speakers:
-        mongo_speaker = speaker.to_document()
-        mongo_speakers.append(mongo_speaker)
+        try:
+            mongo_speaker = speaker.to_document()
+            mongo_speakers.append(mongo_speaker)
+        except:
+            pass
         print(i)
         i += 1
 
@@ -165,7 +166,7 @@ def mongoadd_partys():
             for speech in daytopic["speeches"]:
                 try:
                     party = speech["speaker"]["party"]
-                    partys.append(party["name"])
+                    partys.append(party)
                 except:
                     pass
 
@@ -183,7 +184,7 @@ def mongoadd_partys():
             for daytopic in prot["daytopics"]:
                 for speech in daytopic["speeches"]:
                     try:
-                        if party == speech["speaker"]["party"]["name"]:
+                        if party == speech["speaker"]["party"]:
                             print("hit!")
                             counter += 1
                             vibe += speech["vibe"]
@@ -204,8 +205,8 @@ def mongoadd_partys():
 
 
 def mongoadd_prots():
-    prots = get_prots()
-    mongo_prots = create_mongoprots(prots)
+    prots = core.get_prots()
+    mongo_prots = core.create_mongoprots(prots)
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
     coll = mongoconnec.get_mongocollprots(db)

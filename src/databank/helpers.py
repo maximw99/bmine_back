@@ -21,6 +21,10 @@ from core import read_xml
 
 
 def debug_singleprot():
+    '''Debugs a single prot
+        Returns a dict
+    '''
+
     print("starting")
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
@@ -39,6 +43,10 @@ def debug_singleprot():
 
 
 def get_testspeech():
+    '''Gets amount of speeches
+        Returns int
+    '''
+
     speeches_list = []
 
     # get prot

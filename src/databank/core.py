@@ -17,6 +17,10 @@ from objects import daytopics as Daytopics
 
 
 def get_prots():
+    '''Gets all prots als dicts
+        Returns List
+    '''
+
     prots = []
     speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
     all_speaker = get_allspeakers(speaker_doc)
@@ -35,6 +39,9 @@ def get_prots():
 
 
 def read_xml(doc: xml.dom.minidom.Document, all_speaker):
+    '''Reads xml file and fills class objects
+        Returns dict
+    '''
 
     # get prot with general info
     prot_list = doc.getElementsByTagName("dbtplenarprotokoll")
@@ -128,6 +135,10 @@ def read_xml(doc: xml.dom.minidom.Document, all_speaker):
         
         
 def get_allspeakers(doc: xml.dom.minidom.Document):
+    '''Gets infos about all speakers from xml
+        Returns list of objects
+    '''
+
     speaker_list = doc.getElementsByTagName("MDB")
     all_speaker = []
     for speaker_node in speaker_list:
@@ -185,6 +196,10 @@ def get_allspeakers(doc: xml.dom.minidom.Document):
 
 
 def create_mongoprots(prots: []):
+    '''Takes a prot and turns it into a dict for mongo
+        Returns a dict
+    '''
+
     mongo_prots = []
     for prot in prots:
     
@@ -208,8 +223,7 @@ def create_mongoprots(prots: []):
                 mongo_speaker = speaker.to_document()
 
                 # get party
-                party: Party.Party = speaker.party
-                mongo_party = party.to_document()
+                party = speaker.party
 
                 # get comments
                 mongo_commentlist = []
@@ -219,7 +233,7 @@ def create_mongoprots(prots: []):
                     mongo_commentlist.append(mongo_comment)
 
                 # fill speaker
-                mongo_speaker["party"] = mongo_party
+                mongo_speaker["party"] = party
                     
                 # fill speech
                 mongo_speech["speaker"] = mongo_speaker

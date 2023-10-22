@@ -1,5 +1,12 @@
-from databank import core
-from databank import mongoconnec
+from databank import mongoupload
 
-#core.get_testspeech()
-print(mongoconnec.get_mongoconnec.__doc__)
+
+def add_data():
+    '''Gets all data into db
+        Returns none
+    '''
+
+    mongoupload.mongoadd_prots()
+    mongoupload.mongoadd_speakers()
+    mongoupload.mongoadd_partys()
+
