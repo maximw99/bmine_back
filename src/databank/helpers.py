@@ -42,7 +42,7 @@ def debug_singleprot():
         i += 1
 
 
-def get_testspeech():
+def get_speechesamount():
     '''Gets amount of speeches
         Returns int
     '''
@@ -77,3 +77,40 @@ def get_testspeech():
                 speeches_list.append(speech) 
     print("all prots assembeld")
     print(len(speeches_list))
+
+
+def get_testspeech():
+    '''Gets test speeches out of one prot
+        Returns list
+    '''
+
+    speeches_list = []
+
+    # get prot
+    print("starting")
+    speaker_doc = xml.dom.minidom.parse("data/MDB_STAMMDATEN.XML")
+    all_speaker = get_allspeakers(speaker_doc)
+
+    path = "data"
+    counter = 1
+    for file in os.listdir(path):
+        print("now reading prot: ", counter)
+        if not file.endswith("data.xml"): continue
+        root = os.path.join(path, file)
+        doc = xml.dom.minidom.parse(root)
+        counter += 1
+        prot = read_xml(doc, all_speaker)
+        # get daytopic
+        daytopics = prot.daytopics
+        for daytopic in daytopics:
+            print("read daytopic: ", daytopic.nr)
+
+        #get speech
+            speeches = daytopic.speeches
+            for speech in speeches:
+                print("reading: ", speech.id)
+                speeches_list.append(speech) 
+    print("all prots assembeld")
+    print(len(speeches_list))
+
+    
