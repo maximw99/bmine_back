@@ -12,7 +12,7 @@ CORS(app)
 def one_prot(prot_id):
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
+    coll = mongoconnec.get_mongocollprots(db)
     curr =  coll.find({"_id" : prot_id})
     response = curr[0]
     client.close()
@@ -24,7 +24,7 @@ def one_prot(prot_id):
 def all_prot():
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
+    coll = mongoconnec.get_mongocollprots(db)
 
     counter = 0
     prots = []
@@ -44,7 +44,8 @@ def all_prot():
 def speeches_ov():
     client = mongoconnec.get_mongoconnec()
     db = mongoconnec.get_mongodb(client)
-    coll = mongoconnec.get_mongocoll(db)
+    coll = mongoconnec.get_mongocollprots(db)
+
 
     speeches = []
     curr =  coll.find({}).allow_disk_use(True)

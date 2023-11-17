@@ -1,4 +1,5 @@
 from databank import mongoupload
+from api import api
 
 
 def add_data():
@@ -10,3 +11,4 @@ def add_data():
     mongoupload.mongoadd_speakers()
     mongoupload.mongoadd_partys()
 
+api.start_api()
