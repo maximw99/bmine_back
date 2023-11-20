@@ -1,6 +1,6 @@
 from databank import mongoupload
 from api import api
-
+from databank import helpers
 
 def add_data():
     '''Gets all data into db
@@ -11,4 +11,6 @@ def add_data():
     mongoupload.mongoadd_speakers()
     mongoupload.mongoadd_partys()
 
-api.start_api()
+#api.start_api()
+
+mongoupload.get_imageurl(speakers=)
